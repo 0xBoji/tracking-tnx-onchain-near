@@ -1,0 +1,42 @@
+{
+    "metadata": {
+        "title": "a213",
+        "description": "a123",
+        "category": "Development",
+        "experience": "Intermediate",
+        "tags": [
+            "Blockchain"
+        ],
+        "acceptance_criteria": "123",
+        "contact_details": {
+            "contact": "123",
+            "contact_type": "Discord"
+        }
+    },
+    "deadline": {
+        "DueDate": {
+            "due_date": "1702314000000000000"
+        }
+    },
+    "claimer_approval": {
+        "WhitelistWithApprovals": {
+            "claimers_whitelist": [
+                "kurodenjiro.testnet",
+                "kurodenjiro3.testnet"
+            ]
+        }
+    },
+    "kyc_config": {
+        "KycRequired": {
+            "kyc_verification_method": "DuringClaimApproval"
+        }
+    },
+    "reviewers": {
+        "MoreReviewers": {
+            "more_reviewers": [
+                "kurodenjiro3.testnet",
+                "kurodenjiro4.testnet"
+            ]
+        }
+    }
+}
