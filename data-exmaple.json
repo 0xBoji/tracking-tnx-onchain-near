@@ -40,3 +40,125 @@
         }
     }
 }
+
+{
+    "metadata": {
+        "title": "a123",
+        "description": "123",
+        "category": "Development",
+        "experience": "Intermediate",
+        "tags": [
+            "Blockchain"
+        ],
+        "acceptance_criteria": "13",
+        "contact_details": {
+            "contact": "123",
+            "contact_type": "Telegram"
+        }
+    },
+    "deadline": {
+        "DueDate": {
+            "due_date": "1702314000000000000"
+        }
+    },
+    "claimer_approval": {
+        "ApprovalByWhitelist": {
+            "claimers_whitelist": [
+                "kurodenjiro.testnet",
+                "kurodenjiro3.testnet"
+            ]
+        }
+    },
+    "kyc_config": "KycNotRequired",
+    "multitasking": {
+        "OneForAll": {
+            "number_of_slots": 10,
+            "amount_per_slot": "2000000",
+            "min_slots_to_start": 2
+        }
+    }
+}
+
+
+
+{
+    "metadata": {
+        "title": "a123",
+        "description": "a123",
+        "category": "Development",
+        "experience": "Intermediate",
+        "tags": [
+            "Blockchain"
+        ],
+        "acceptance_criteria": "123",
+        "contact_details": {
+            "contact": "123",
+            "contact_type": "Telegram"
+        }
+    },
+    "deadline": {
+        "DueDate": {
+            "due_date": "1702486800000000000"
+        }
+    },
+    "claimer_approval": "MultipleClaims",
+    "kyc_config": "KycNotRequired",
+    "multitasking": {
+        "OneForAll": {
+            "number_of_slots": 5,
+            "amount_per_slot": "2000000",
+            "min_slots_to_start": 2
+        }
+    }
+}
+This channale is to share updates regarding projects & build in a more transparent fashion
+
+Template
+
+🔔 DAILY UPDATE:  TODAY's DATE
+
+📆 YESTERDAY:
+- yesterday I did this (hyperlink proof)
+- I also did this
+
+💻 WHAT I AM DOING TODAY:
+- task 1
+
+🛑  BLOCKERS: 
+ -@anyone that is causing a blocker or outline any blockers in general
+
+ BUILDER UPDATE:
+December 5, 2023
+
+⏪ YESTERDAY
+
+- hacked on a context graph with permissionless tags for everything
+- participated in the Liberty DAO community call to discuss Map-a-thon, etc.
+- started building a dashboard of “quests”
+- reviewed Kuro’s trending posts widget
+- gathered feedback on BDAO rewards process
+
+⏩ TODAY
+
+- Liberty DAO coworking at Station3
+- ETHDenver activation planning
+- building the Map-a-thon guide with a library of resources
+- finalizing event proposal for Open Data Hackathon (March)
+
+🛑 BLOCKERS
+
+- NDC Trust still hasn’t finalized our Q1 funding, although it has been approved by the House of Merit
+
+
+🔔 DAILY UPDATE:  December 8, 2023
+
+📆 YESTERDAY:
+Modifying the mapbox component to display Near social posts
+
+💻 WHAT I AM DOING TODAY:
+
+I will be working with the BOS web IDE to implement the same as i am not able to use bos-cli-rs on my windows machine
+
+🛑  BLOCKERS: 
+Raised an issue on bos-cli-rs repo citing the same 
+https://github.com/bos-cli-rs/bos-cli-rs/issues/73
