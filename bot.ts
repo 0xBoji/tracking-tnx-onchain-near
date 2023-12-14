@@ -22,14 +22,14 @@
 
 import { Composer, Markup, Scenes, session, Telegraf } from "telegraf";
 import * as nearAPI from "near-api-js";
-import { toHTML, toMarkdownV2 } from "@telegraf/entity";
+import { json } from "stream/consumers";
+const removeMd = require('remove-markdown');
 
 require('dotenv').config();
 const provider = new nearAPI.providers.JsonRpcProvider({url:process.env.NEAR_RPC_API as string} );
 const stepHandler = new Composer<Scenes.WizardContext>();
 const hero_bounty_address = process.env.HERO_BOUNTY_ADDRESS as string;
-var showdown  = require('showdown'),
-    converter = new showdown.Converter()
+
 
 const bounty_process = (transaction: any)=> {
 	if (hero_bounty_address.includes(transaction.receiver_id)) {
@@ -136,9 +136,17 @@ const superWizard = new Scenes.WizardScene(
 									const claimer_approval = advanced_metadata.claimer_approval;
 									let claimer_approval_element = ''
 									if(claimer_approval){
+										console.log(JSON.stringify(claimer_approval));
 										if(claimer_approval?.WhitelistWithApprovals?.claimers_whitelist){
 											claimer_approval_element = '<b>⏩ Whitelist :</b>\n\n'
 											claimer_approval.WhitelistWithApprovals.claimers_whitelist.forEach((element : string) => {
+												console.log(element);
+												claimer_approval_element = claimer_approval_element + element +'\n'
+											});
+										}
+										if(claimer_approval?.ApprovalByWhitelist?.claimers_whitelist){
+											claimer_approval_element = '<b>⏩ Whitelist :</b>\n\n'
+											claimer_approval.ApprovalByWhitelist.claimers_whitelist.forEach((element : string) => {
 												console.log(element);
 												claimer_approval_element = claimer_approval_element + element +'\n'
 											});
@@ -153,7 +161,7 @@ const superWizard = new Scenes.WizardScene(
 										`<b>NEW BOUNTY UPDATE:</b>\n` +
 										`${new Date().toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n\n`+
 										`<b> ${metadata.title}\n </b>` +
-										` - ${converter.makeHtml(metadata.description).replace('<p>','').replace('</p>','')}\n\n`+
+										` - ${removeMd(metadata.description)}\n\n`+
 										` <b>⏩ Requirements:</b>\n\n`+
 										`- <b>Level:</b> ${metadata.experience} \n`+
 										`- <b>${metadata.category} Skill : </b>${tags_element}\n`+
