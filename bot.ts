@@ -22,7 +22,7 @@
 
 import { Composer, Markup, Scenes, session, Telegraf } from "telegraf";
 import * as nearAPI from "near-api-js";
-import { json } from "stream/consumers";
+import axios from 'axios';
 const removeMd = require('remove-markdown');
 
 require('dotenv').config();
@@ -41,12 +41,11 @@ const bounty_process = (transaction: any)=> {
 
 const create_new_bounty = (transaction: any)=> {
 	if (transaction.receiver_id == process.env.USDT_ADDRESS || transaction.receiver_id == process.env.USDC_ADDRESS || transaction.receiver_id == process.env.DAI_ADDRESS  || transaction.receiver_id == process.env.XP_ADDRESS) {
-		
+
 		const action = JSON.parse(atob(transaction.actions[0].FunctionCall.args));
 		if(action && action.receiver_id == hero_bounty_address){
 			return true;
 		}
-			
 	}
 	return false;
 	
@@ -76,14 +75,40 @@ const superWizard = new Scenes.WizardScene(
 					if (transactions.length > 0) {
 						
 						for (const transaction of transactions) {
-						//	console.log(JSON.stringify(transaction));
+						//console.log(JSON.stringify(transaction));
 						//claim bounty
 							if (bounty_process(transaction)) {
-								if(transaction.actions[0].FunctionCall.method_name=='bounty_done'){
-									await ctx.reply("bounty_done")
-									//https://staging.heroes.build/api/bounty/transactions?bountyId=291
-									const claim_bounty_json = JSON.parse(atob(transaction.actions[0].FunctionCall.args));
-									await ctx.reply(`${claim_bounty_json.id} - ${claim_bounty_json.description} - ${transaction.signer_id}`)
+								console.log(transaction);
+								if(transaction.actions[0].FunctionCall.method_name=='bounty_action'){
+									const result : any = await provider.txStatus(transaction.hash, transaction.receiver_id);
+									let amount = "";
+									let stable_USD = ""
+									let id = JSON.parse(atob(transaction.actions[0].FunctionCall.args)).id;
+									
+									result.receipts_outcome.forEach((element:any) => {
+										if(element.outcome.logs[0]?.includes('Transfer')){
+											amount = parseInt(element.outcome.logs[0].split(" ")[1])/1e6 + "";
+											stable_USD = element.outcome.executor_id ==  'usdt.fakes.testnet' ? 'USDT.e': transaction.receiver_id ==  'usdc.fakes.testnet' ? 'USDC.e' :  transaction.receiver_id ==  'dai.fakes.testnet' ? "DAI" :  transaction.receiver_id ==  'rep.heroe.testnet' ? "XREP" : "unknown" ;
+										}
+									});
+									
+									const {data} = await axios<any>(`https://staging.heroes.build/api/bounty/transactions?bountyId=${id}`);
+									const title = JSON.parse(JSON.parse(data[0].args).msg).metadata.title
+								
+									await ctx.replyWithHTML(`🎉<b>Congratulations Hunter ${transaction.signer_id} Successfully 🎉\n`+
+									`Claimed $${amount} ${stable_USD} for Bounty ${title}</b>`,
+									{reply_markup: {
+										inline_keyboard: [
+											[{
+												text: "SEE DETAILS",
+												url: `https://staging.heroes.build/bounties/bounty/${id}`,
+											}, 
+										],
+										]
+											
+										}
+									}
+									)
 								}
 								console.log('Data Sent to Endpoint');
 							}
