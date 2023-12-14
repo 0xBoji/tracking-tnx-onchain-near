@@ -22,13 +22,14 @@
 
 import { Composer, Markup, Scenes, session, Telegraf } from "telegraf";
 import * as nearAPI from "near-api-js";
+import { toHTML, toMarkdownV2 } from "@telegraf/entity";
+
 require('dotenv').config();
-
-
 const provider = new nearAPI.providers.JsonRpcProvider({url:process.env.NEAR_RPC_API as string} );
 const stepHandler = new Composer<Scenes.WizardContext>();
 const hero_bounty_address = process.env.HERO_BOUNTY_ADDRESS as string;
-
+var showdown  = require('showdown'),
+    converter = new showdown.Converter()
 
 const bounty_process = (transaction: any)=> {
 	if (hero_bounty_address.includes(transaction.receiver_id)) {
@@ -119,7 +120,7 @@ const superWizard = new Scenes.WizardScene(
 									let multitasking_element = ""
 									if(multitasking){
 										if(multitasking?.OneForAll){
-											multitasking_element = '- <b>Share : </b>$'+parseInt(amount)/parseInt(multitasking.OneForAll.number_of_slots) * multitasking.OneForAll.amount_per_slot/1e6 + ` ${stable_USD} per Hunter \n` 
+											multitasking_element = '- <b>Share : </b>$'+  parseInt(multitasking.OneForAll.amount_per_slot)/1e6  + ` ${stable_USD} per Hunter \n` 
 										}
 									}
 									let reviewers_element = "";
@@ -152,7 +153,7 @@ const superWizard = new Scenes.WizardScene(
 										`<b>NEW BOUNTY UPDATE:</b>\n` +
 										`${new Date().toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n\n`+
 										`<b> ${metadata.title}\n </b>` +
-										` - ${metadata.description}\n\n`+
+										` - ${converter.makeHtml(metadata.description).replace('<p>','').replace('</p>','')}\n\n`+
 										` <b>⏩ Requirements:</b>\n\n`+
 										`- <b>Level:</b> ${metadata.experience} \n`+
 										`- <b>${metadata.category} Skill : </b>${tags_element}\n`+
