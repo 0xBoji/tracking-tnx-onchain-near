@@ -186,7 +186,7 @@ setInterval(async () => {
 								`${new Date().toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n\n`+
 								`<b> ${metadata.title}\n </b>` +
 								` - ${removeMd(metadata.description)}\n\n`+
-								` <b>⏩ Requirements:</b>\n\n`+
+								`<b>⏩ Requirements:</b>\n\n`+
 								`- <b>Level:</b> ${metadata.experience} \n`+
 								`- <b>${metadata.category} Skill : </b>${tags_element}\n`+
 								`- <b>Acceptance criteria :</b> ${metadata.acceptance_criteria}\n` +
