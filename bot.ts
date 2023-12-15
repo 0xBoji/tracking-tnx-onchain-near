@@ -20,30 +20,15 @@
 // bounty_done : user - how much they claim - title
 // Smart contract address: bounties.heroes.build
 
-import { Composer, Markup, Scenes, session, Telegraf , Context } from "telegraf";
+import {session, Telegraf , Context } from "telegraf";
 import * as nearAPI from "near-api-js";
 import axios from 'axios';
-import { run } from "node:test";
 const removeMd = require('remove-markdown');
 
 require('dotenv').config();
-interface MyWizardSession extends Scenes.WizardSessionData {
-	run: boolean;
-}
-interface MySession extends Scenes.WizardSession < MyWizardSession > {
-	run: boolean;
-}
-interface MyContext extends Context {
-	run:boolean;
-	myContextProp: string;
-	session: MySession;
-	scene: Scenes.SceneContextScene < MyContext,
-	MyWizardSession > ;
-	wizard: Scenes.WizardContextWizard < MyContext > ;
-}
+
 
 const provider = new nearAPI.providers.JsonRpcProvider({url:process.env.NEAR_RPC_API as string} );
-const stepHandler = new Composer<MyContext>();
 const hero_bounty_address = process.env.HERO_BOUNTY_ADDRESS as string;
 
 
@@ -68,184 +53,168 @@ const create_new_bounty = (transaction: any)=> {
 }
 
 
-const superWizard = new Scenes.WizardScene(
-	"super-wizard",
-	async(ctx) => {
-		if(!ctx.session.run){
-			let latestBlockHeight = 0;
-			setInterval(async () => {
-				ctx.session.run = true;
-				try {
-					const latestBlock = await provider.block({ finality: 'final' });
-					const height = latestBlock.header.height;
-		
-					if (height === latestBlockHeight) {
-						return;
-					}
-		
-					latestBlockHeight = height;
-					console.log('Latest Block:', height);
-	
-					const chunks = latestBlock.chunks;
-		
-					for (const chunk of chunks) {
-						const chunkTemp = await provider.chunk(chunk.chunk_hash);
-						const transactions = chunkTemp.transactions;
-						
-						if (transactions.length > 0) {
+const bot = new Telegraf(process.env.BOT_TOKEN as string);
+
+setInterval(async () => {
+	try {
+		const latestBlock = await provider.block({ finality: 'final' });
+		const height = latestBlock.header.height;
+		let latestBlockHeight = 0;
+		if (height === latestBlockHeight) {
+			return;
+		}
+
+		latestBlockHeight = height;
+		console.log('Latest Block:', height);
+
+		const chunks = latestBlock.chunks;
+
+		for (const chunk of chunks) {
+			const chunkTemp = await provider.chunk(chunk.chunk_hash);
+			const transactions = chunkTemp.transactions;
+			
+			if (transactions.length > 0) {
+				
+				for (const transaction of transactions) {
+				//console.log(JSON.stringify(transaction));
+				//claim bounty
+					if (bounty_process(transaction)) {
+						console.log(JSON.stringify(transaction));
+						if(transaction.actions[0].FunctionCall.method_name=='bounty_action'){
+							const result : any = await provider.txStatus(transaction.hash, transaction.receiver_id);
+							let amount = "";
+							let stable_USD = ""
+							let id = JSON.parse(atob(transaction.actions[0].FunctionCall.args)).id;
 							
-							for (const transaction of transactions) {
-							//console.log(JSON.stringify(transaction));
-							//claim bounty
-								if (bounty_process(transaction)) {
-									console.log(JSON.stringify(transaction));
-									if(transaction.actions[0].FunctionCall.method_name=='bounty_action'){
-										const result : any = await provider.txStatus(transaction.hash, transaction.receiver_id);
-										let amount = "";
-										let stable_USD = ""
-										let id = JSON.parse(atob(transaction.actions[0].FunctionCall.args)).id;
-										
-										result.receipts_outcome.forEach((element:any) => {
-											if(element.outcome.logs[0]?.includes('Transfer')){
-												amount = parseInt(element.outcome.logs[0].split(" ")[1])/1e6 + "";
-												stable_USD = element.outcome.executor_id ==  'usdt.fakes.testnet' ? 'USDT.e': transaction.receiver_id ==  'usdc.fakes.testnet' ? 'USDC.e' :  transaction.receiver_id ==  'dai.fakes.testnet' ? "DAI" :  transaction.receiver_id ==  'rep.heroe.testnet' ? "XREP" : "unknown" ;
-											}
-										});
-										
-										const {data} = await axios<any>(`https://staging.heroes.build/api/bounty/transactions?bountyId=${id}`);
-										const title = JSON.parse(JSON.parse(data[0].args).msg).metadata.title
-									
-										await ctx.replyWithHTML(`🎉<b>Congratulations Hunter ${transaction.signer_id} 🎉</b>\n\n`+
-										`- <b>Claimed :</b> $${amount}\n`+
-										`- <b>Paid in :</b>${stable_USD}\n`+
-										`- <b>Bounty :</b>${title}\n\n`+
-										`⏩ <b>Bounty :</b>\n\n`+
-										`<a href="${`https://staging.heroes.build/bounties/bounty/${id}`}">https://staging.heroes.build/bounties/bounty/${id}</a>`
-										,{ 
-											disable_web_page_preview: true 
-										})
-									}
-									console.log('Data Sent to Endpoint');
+							result.receipts_outcome.forEach((element:any) => {
+								if(element.outcome.logs[0]?.includes('Transfer')){
+									amount = parseInt(element.outcome.logs[0].split(" ")[1])/1e6 + "";
+									stable_USD = element.outcome.executor_id ==  'usdt.fakes.testnet' ? 'USDT.e': transaction.receiver_id ==  'usdc.fakes.testnet' ? 'USDC.e' :  transaction.receiver_id ==  'dai.fakes.testnet' ? "DAI" :  transaction.receiver_id ==  'rep.heroe.testnet' ? "XREP" : "unknown" ;
 								}
-								if (create_new_bounty(transaction)) {
-									const result : any = await provider.txStatus(transaction.hash, transaction.receiver_id);
-									
-									const status  = atob(result.status.SuccessValue);
-									let id = null;
-									if(status !== '"0"'){
-										result.receipts_outcome.forEach((element:any) => {
-											if(element.outcome.logs[0]?.includes('index')){
-												id = element.outcome.logs[0].split('index')[1].replace(/^\D+/g, '');
-											}
-										});
-										
-									}
-									if(id){
-										const stable_USD = transaction.receiver_id ==  'usdt.fakes.testnet' ? 'USDT.e': transaction.receiver_id ==  'usdc.fakes.testnet' ? 'USDC.e' :  transaction.receiver_id ==  'dai.fakes.testnet' ? "DAI" :  transaction.receiver_id ==  'rep.heroe.testnet' ? "XREP" : "unknown";
-										const amount = parseInt(JSON.parse(atob(transaction.actions[0].FunctionCall.args)).amount) / 1e6 + "";
-										const advanced_metadata = JSON.parse(JSON.parse(atob(transaction.actions[0].FunctionCall.args)).msg);
-										const metadata = advanced_metadata.metadata;
-										const deadline = advanced_metadata.deadline;
-										const kyc_config = advanced_metadata.kyc_config;
-										const reviewers = advanced_metadata.reviewers;
-										const multitasking = advanced_metadata.multitasking;
-										const tags = metadata.tags ;
-										let tags_element = "";
-										if(tags.length > 1){
-											const Tagspop = tags.pop();
-											tags_element = tags.join(", ") + " and " + Tagspop ;
-										}else{
-											tags_element = tags[0]
-										}
-										let multitasking_element = ""
-										if(multitasking){
-											if(multitasking?.OneForAll){
-												multitasking_element = '- <b>Share : </b>$'+  parseInt(multitasking.OneForAll.amount_per_slot)/1e6  + ` ${stable_USD} per Hunter \n` 
-											}
-										}
-										let reviewers_element = "";
-										if(reviewers){
-											if(reviewers.MoreReviewers?.more_reviewers){
-												reviewers_element='<b>⏩ REVIEWER :</b>\n\n'
-												reviewers.MoreReviewers.more_reviewers.forEach((element : string) => {
-													reviewers_element =reviewers_element + "- " + element+"\n"
-												});
-												reviewers_element = reviewers_element +"\n"
-											}
-											
-										}
-										const claimer_approval = advanced_metadata.claimer_approval;
-										let claimer_approval_element = ''
-										if(claimer_approval){
-											console.log(JSON.stringify(claimer_approval));
-											if(claimer_approval?.WhitelistWithApprovals?.claimers_whitelist){
-												claimer_approval_element = '<b>⏩ Whitelist :</b>\n\n'
-												claimer_approval.WhitelistWithApprovals.claimers_whitelist.forEach((element : string) => {
-													console.log(element);
-													claimer_approval_element = claimer_approval_element + element +'\n'
-												});
-											}
-											if(claimer_approval?.ApprovalByWhitelist?.claimers_whitelist){
-												claimer_approval_element = '<b>⏩ Whitelist :</b>\n\n'
-												claimer_approval.ApprovalByWhitelist.claimers_whitelist.forEach((element : string) => {
-													console.log(element);
-													claimer_approval_element = claimer_approval_element + element +'\n'
-												});
-											}
-										}
-	
-										const kyc_config_element  = kyc_config ==  'KycNotRequired' ? '' :  kyc_config.KycRequired.kyc_verification_method == 'DuringClaimApproval' ? '- <b>KYC :</b> After\n' : kyc_config.KycRequired.kyc_verification_method == 'WhenCreatingClaim' ? '- <b>KYC :</b> Before \n' : '';
-										const deadline_element =  deadline == 'WithoutDeadline' ? '' : `-<b> Deadline :</b> ${new Date(parseInt(deadline?.DueDate.due_date)/1000000).toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n`
-										const contract_element_url = metadata.contact_details.contact_type == "Telegram" ? `https://t.me/${metadata.contact_details.contact}` : metadata.contact_details.contact_type == 'Discord' ? `https://discord.com/users/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Twitter' ? `https://twitter.com/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Email' ? metadata.contact_details.contact_type : "Unknown";
-										await ctx.sendPhoto({source: './new_bounty.jpg'}, { 
-											caption: 
-											`<b>NEW BOUNTY UPDATE:</b>\n` +
-											`${new Date().toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n\n`+
-											`<b> ${metadata.title}\n </b>` +
-											` - ${removeMd(metadata.description)}\n\n`+
-											` <b>⏩ Requirements:</b>\n\n`+
-											`- <b>Level:</b> ${metadata.experience} \n`+
-											`- <b>${metadata.category} Skill : </b>${tags_element}\n`+
-											`- <b>Acceptance criteria :</b> ${metadata.acceptance_criteria}\n` +
-											`${kyc_config_element}\n` +
-											`<b>⏩ DETAILS :</b>\n\n`+
-											`- <b>Paid in : </b>${stable_USD}\n`+
-											`- <b>Total : </b>$${amount} \n` +
-											`${multitasking_element}`+
-											`${deadline_element}`+
-											`- <b>${metadata.contact_details.contact_type}: </b><a href="${contract_element_url}">${contract_element_url}</a>\n` +
-											`\n`+
-											`${claimer_approval_element}` +
-											`${reviewers_element}` +
-											`<b>Bounty:</b>\n`+
-											`<a href="${`https://staging.heroes.build/bounties/bounty/${id}`}">https://staging.heroes.build/bounties/bounty/${id}</a>`,
-											parse_mode: 'HTML',
-										
-										 });
-									}
+							});
+							
+							const {data} = await axios<any>(`https://staging.heroes.build/api/bounty/transactions?bountyId=${id}`);
+							const title = JSON.parse(JSON.parse(data[0].args).msg).metadata.title
+							
+							await bot.telegram.sendMessage('-1002003749050',`🎉<b>Congratulations Hunter ${transaction.signer_id} 🎉</b>\n\n`+
+							`- <b>Claimed :</b> $${amount}\n`+
+							`- <b>Paid in :</b>${stable_USD}\n`+
+							`- <b>Bounty :</b>${title}\n\n`+
+							`⏩ <b>Bounty :</b>\n\n`+
+							`<a href="${`https://staging.heroes.build/bounties/bounty/${id}`}">https://staging.heroes.build/bounties/bounty/${id}</a>`
+							,{ 
+								disable_web_page_preview: true 
+							})
+						}
+						console.log('Data Sent to Endpoint');
+					}
+					if (create_new_bounty(transaction)) {
+						const result : any = await provider.txStatus(transaction.hash, transaction.receiver_id);
+						
+						const status  = atob(result.status.SuccessValue);
+						let id = null;
+						if(status !== '"0"'){
+							result.receipts_outcome.forEach((element:any) => {
+								if(element.outcome.logs[0]?.includes('index')){
+									id = element.outcome.logs[0].split('index')[1].replace(/^\D+/g, '');
+								}
+							});
+							
+						}
+						if(id){
+							const stable_USD = transaction.receiver_id ==  'usdt.fakes.testnet' ? 'USDT.e': transaction.receiver_id ==  'usdc.fakes.testnet' ? 'USDC.e' :  transaction.receiver_id ==  'dai.fakes.testnet' ? "DAI" :  transaction.receiver_id ==  'rep.heroe.testnet' ? "XREP" : "unknown";
+							const amount = parseInt(JSON.parse(atob(transaction.actions[0].FunctionCall.args)).amount) / 1e6 + "";
+							const advanced_metadata = JSON.parse(JSON.parse(atob(transaction.actions[0].FunctionCall.args)).msg);
+							const metadata = advanced_metadata.metadata;
+							const deadline = advanced_metadata.deadline;
+							const kyc_config = advanced_metadata.kyc_config;
+							const reviewers = advanced_metadata.reviewers;
+							const multitasking = advanced_metadata.multitasking;
+							const tags = metadata.tags ;
+							let tags_element = "";
+							if(tags.length > 1){
+								const Tagspop = tags.pop();
+								tags_element = tags.join(", ") + " and " + Tagspop ;
+							}else{
+								tags_element = tags[0]
+							}
+							let multitasking_element = ""
+							if(multitasking){
+								if(multitasking?.OneForAll){
+									multitasking_element = '- <b>Share : </b>$'+  parseInt(multitasking.OneForAll.amount_per_slot)/1e6  + ` ${stable_USD} per Hunter \n` 
 								}
 							}
-									}
-									
-	
-		}
-	 } catch (error) {
-			console.error('Error Processing Block:', error);
-		}
-	}, 500)
-		}
-	
-	},
-	stepHandler,
+							let reviewers_element = "";
+							if(reviewers){
+								if(reviewers.MoreReviewers?.more_reviewers){
+									reviewers_element='<b>⏩ REVIEWER :</b>\n\n'
+									reviewers.MoreReviewers.more_reviewers.forEach((element : string) => {
+										reviewers_element =reviewers_element + "- " + element+"\n"
+									});
+									reviewers_element = reviewers_element +"\n"
+								}
+								
+							}
+							const claimer_approval = advanced_metadata.claimer_approval;
+							let claimer_approval_element = ''
+							if(claimer_approval){
+								console.log(JSON.stringify(claimer_approval));
+								if(claimer_approval?.WhitelistWithApprovals?.claimers_whitelist){
+									claimer_approval_element = '<b>⏩ Whitelist :</b>\n\n'
+									claimer_approval.WhitelistWithApprovals.claimers_whitelist.forEach((element : string) => {
+										console.log(element);
+										claimer_approval_element = claimer_approval_element + element +'\n'
+									});
+								}
+								if(claimer_approval?.ApprovalByWhitelist?.claimers_whitelist){
+									claimer_approval_element = '<b>⏩ Whitelist :</b>\n\n'
+									claimer_approval.ApprovalByWhitelist.claimers_whitelist.forEach((element : string) => {
+										console.log(element);
+										claimer_approval_element = claimer_approval_element + element +'\n'
+									});
+								}
+							}
 
+							const kyc_config_element  = kyc_config ==  'KycNotRequired' ? '' :  kyc_config.KycRequired.kyc_verification_method == 'DuringClaimApproval' ? '- <b>KYC :</b> After\n' : kyc_config.KycRequired.kyc_verification_method == 'WhenCreatingClaim' ? '- <b>KYC :</b> Before \n' : '';
+							const deadline_element =  deadline == 'WithoutDeadline' ? '' : `-<b> Deadline :</b> ${new Date(parseInt(deadline?.DueDate.due_date)/1000000).toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n`
+							const contract_element_url = metadata.contact_details.contact_type == "Telegram" ? `https://t.me/${metadata.contact_details.contact}` : metadata.contact_details.contact_type == 'Discord' ? `https://discord.com/users/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Twitter' ? `https://twitter.com/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Email' ? metadata.contact_details.contact_type : "Unknown";
+							await bot.telegram.sendPhoto('-1002003749050',{source: './new_bounty.jpg'}, { 
+								caption: 
+								`<b>NEW BOUNTY UPDATE:</b>\n` +
+								`${new Date().toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n\n`+
+								`<b> ${metadata.title}\n </b>` +
+								` - ${removeMd(metadata.description)}\n\n`+
+								` <b>⏩ Requirements:</b>\n\n`+
+								`- <b>Level:</b> ${metadata.experience} \n`+
+								`- <b>${metadata.category} Skill : </b>${tags_element}\n`+
+								`- <b>Acceptance criteria :</b> ${metadata.acceptance_criteria}\n` +
+								`${kyc_config_element}\n` +
+								`<b>⏩ DETAILS :</b>\n\n`+
+								`- <b>Paid in : </b>${stable_USD}\n`+
+								`- <b>Total : </b>$${amount} \n` +
+								`${multitasking_element}`+
+								`${deadline_element}`+
+								`- <b>${metadata.contact_details.contact_type}: </b><a href="${contract_element_url}">${contract_element_url}</a>\n` +
+								`\n`+
+								`${claimer_approval_element}` +
+								`${reviewers_element}` +
+								`<b>Bounty:</b>\n`+
+								`<a href="${`https://staging.heroes.build/bounties/bounty/${id}`}">https://staging.heroes.build/bounties/bounty/${id}</a>`,
+								parse_mode: 'HTML',
+							
+							 });
+						}
+					}
+				}
+						}
+						
 
-);
-
-const bot = new Telegraf<MyContext>(process.env.BOT_TOKEN as string);
-const stage = new Scenes.Stage<MyContext>([superWizard], {
-	default: "super-wizard",
-});
+}
+} catch (error) {
+console.error('Error Processing Block:', error);
+}
+}, 500)
+//bot.telegram.sendMessage('-1002003749050', 'your message');
 bot.use(session());
-bot.use(stage.middleware());
 
 bot.launch();
