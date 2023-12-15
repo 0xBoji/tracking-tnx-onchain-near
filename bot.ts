@@ -96,7 +96,7 @@ setInterval(async () => {
 							const {data} = await axios<any>(`https://staging.heroes.build/api/bounty/transactions?bountyId=${id}`);
 							const title = JSON.parse(JSON.parse(data[0].args).msg).metadata.title
 							
-							await bot.telegram.sendMessage('-1002003749050',`🎉<b>Congratulations Hunter ${transaction.signer_id} 🎉</b>\n\n`+
+							await bot.telegram.sendMessage(process.env.CHANNEL_ID as string,`🎉<b>Congratulations Hunter ${transaction.signer_id} 🎉</b>\n\n`+
 							`- <b>Claimed :</b> $${amount}\n`+
 							`- <b>Paid in :</b>${stable_USD}\n`+
 							`- <b>Bounty :</b>${title}\n\n`+
@@ -178,7 +178,7 @@ setInterval(async () => {
 							const kyc_config_element  = kyc_config ==  'KycNotRequired' ? '' :  kyc_config.KycRequired.kyc_verification_method == 'DuringClaimApproval' ? '- <b>KYC :</b> After\n' : kyc_config.KycRequired.kyc_verification_method == 'WhenCreatingClaim' ? '- <b>KYC :</b> Before \n' : '';
 							const deadline_element =  deadline == 'WithoutDeadline' ? '' : `-<b> Deadline :</b> ${new Date(parseInt(deadline?.DueDate.due_date)/1000000).toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n`
 							const contract_element_url = metadata.contact_details.contact_type == "Telegram" ? `https://t.me/${metadata.contact_details.contact}` : metadata.contact_details.contact_type == 'Discord' ? `https://discord.com/users/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Twitter' ? `https://twitter.com/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Email' ? metadata.contact_details.contact_type : "Unknown";
-							await bot.telegram.sendPhoto('-1002003749050',{source: './new_bounty.jpg'}, { 
+							await bot.telegram.sendPhoto(process.env.CHANNEL_ID as string,{source: './new_bounty.jpg'}, { 
 								caption: 
 								`<b>NEW BOUNTY UPDATE:</b>\n` +
 								`${new Date().toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n\n`+
@@ -214,7 +214,7 @@ setInterval(async () => {
 console.error('Error Processing Block:', error);
 }
 }, 500)
-//bot.telegram.sendMessage('-1002003749050', 'your message');
+
 bot.use(session());
 
 bot.launch();
