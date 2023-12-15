@@ -55,11 +55,13 @@ const create_new_bounty = (transaction: any)=> {
 
 const bot = new Telegraf(process.env.BOT_TOKEN as string);
 
+let latestBlockHeight = 0;
 setInterval(async () => {
 	try {
+		
 		const latestBlock = await provider.block({ finality: 'final' });
 		const height = latestBlock.header.height;
-		let latestBlockHeight = 0;
+		
 		if (height === latestBlockHeight) {
 			return;
 		}
