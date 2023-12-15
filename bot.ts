@@ -100,9 +100,9 @@ setInterval(async () => {
 							
 							await bot.telegram.sendMessage(process.env.CHANNEL_ID as string,`🎉<b>Congratulations ! </b>\n `+
 							`<b>Hunter ${transaction.signer_id}</b> \n\n`+
-							`- <b>Claimed: </b>$${amount}\n`+
-							`- <b>Paid in: </b>${stable_USD}\n`+
-							`- <b>Bounty: </b>${title}\n\n`+
+							`- <b>Claimed: </b> $${amount}\n`+
+							`- <b>Paid in: </b> ${stable_USD}\n`+
+							`- <b>Bounty: </b> ${title}\n\n`+
 							`⏩  <a href="${`https://${process.env.HOST_URL}/bounties/bounty/${id}`}">https://${process.env.HOST_URL}/bounties/bounty/${id}</a>`
 							,{ parse_mode: 'HTML',
 								disable_web_page_preview: true 
@@ -178,7 +178,7 @@ setInterval(async () => {
 							}
 
 							const kyc_config_element  = kyc_config ==  'KycNotRequired' ? '' :  kyc_config.KycRequired.kyc_verification_method == 'DuringClaimApproval' ? '- <b>KYC:</b> After\n' : kyc_config.KycRequired.kyc_verification_method == 'WhenCreatingClaim' ? '- <b>KYC:</b> Before \n' : '';
-							const deadline_element =  deadline == 'WithoutDeadline' ? '' : `-<b> Deadline:</b> ${new Date(parseInt(deadline?.DueDate.due_date)/1000000).toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n`
+							const deadline_element =  deadline == 'WithoutDeadline' ? '' : `-<b> Deadline: </b> ${new Date(parseInt(deadline?.DueDate.due_date)/1000000).toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n`
 							const contract_element_url = metadata.contact_details.contact_type == "Telegram" ? `https://t.me/${metadata.contact_details.contact}` : metadata.contact_details.contact_type == 'Discord' ? `https://discord.com/users/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Twitter' ? `https://twitter.com/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Email' ? metadata.contact_details.contact_type : "Unknown";
 							await bot.telegram.sendPhoto(process.env.CHANNEL_ID as string,{source: './new_bounty.jpg'}, { 
 								caption: 
@@ -192,11 +192,11 @@ setInterval(async () => {
 								`- <b>Acceptance criteria:</b> ${metadata.acceptance_criteria}\n` +
 								`${kyc_config_element}\n` +
 								`<b>⏩ DETAILS:</b>\n\n`+
-								`- <b>Paid in: </b>${stable_USD}\n`+
-								`- <b>Total: </b>$${amount} \n` +
+								`- <b>Paid in: </b> ${stable_USD}\n`+
+								`- <b>Total: </b> $${amount} \n` +
 								`${multitasking_element}`+
 								`${deadline_element}`+
-								`- <b>${metadata.contact_details.contact_type}: </b><a href="${contract_element_url}">${contract_element_url}</a>\n` +
+								`- <b>${metadata.contact_details.contact_type}:</b> <a href="${contract_element_url}">${contract_element_url}</a>\n` +
 								`\n`+
 								`${claimer_approval_element}` +
 								`${reviewers_element}` +
