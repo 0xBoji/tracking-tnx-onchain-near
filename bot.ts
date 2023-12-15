@@ -100,8 +100,7 @@ setInterval(async () => {
 							`- <b>Claimed :</b> $${amount}\n`+
 							`- <b>Paid in :</b>${stable_USD}\n`+
 							`- <b>Bounty :</b>${title}\n\n`+
-							`⏩ <b>Bounty :</b>\n\n`+
-							`<a href="${`https://staging.heroes.build/bounties/bounty/${id}`}">https://staging.heroes.build/bounties/bounty/${id}</a>`
+							`⏩  <a href="${`https://staging.heroes.build/bounties/bounty/${id}`}">https://staging.heroes.build/bounties/bounty/${id}</a>`
 							,{ parse_mode: 'HTML',
 								disable_web_page_preview: true 
 							})
