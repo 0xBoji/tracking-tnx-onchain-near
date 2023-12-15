@@ -95,7 +95,7 @@ setInterval(async () => {
 								}
 							});
 							
-							const {data} = await axios<any>(`https://staging.heroes.build/api/bounty/transactions?bountyId=${id}`);
+							const {data} = await axios<any>(`https://${process.env.HOST_URL}/api/bounty/transactions?bountyId=${id}`);
 							const title = JSON.parse(JSON.parse(data[0].args).msg).metadata.title
 							
 							await bot.telegram.sendMessage(process.env.CHANNEL_ID as string,`🎉<b>Congratulations ! </b>\n `+
@@ -103,7 +103,7 @@ setInterval(async () => {
 							`- <b>Claimed :</b> $${amount}\n`+
 							`- <b>Paid in :</b>${stable_USD}\n`+
 							`- <b>Bounty :</b>${title}\n\n`+
-							`⏩  <a href="${`https://staging.heroes.build/bounties/bounty/${id}`}">https://staging.heroes.build/bounties/bounty/${id}</a>`
+							`⏩  <a href="${`https://${process.env.HOST_URL}/bounties/bounty/${id}`}">https://${process.env.HOST_URL}/bounties/bounty/${id}</a>`
 							,{ parse_mode: 'HTML',
 								disable_web_page_preview: true 
 							})
@@ -201,7 +201,7 @@ setInterval(async () => {
 								`${claimer_approval_element}` +
 								`${reviewers_element}` +
 								`<b>Bounty:</b>\n`+
-								`<a href="${`https://staging.heroes.build/bounties/bounty/${id}`}">https://staging.heroes.build/bounties/bounty/${id}</a>`,
+								`<a href="${`https://${process.env.HOST_URL}/bounties/bounty/${id}`}">https://${process.env.HOST_URL}/bounties/bounty/${id}</a>`,
 								parse_mode: 'HTML',
 							
 							 });
