@@ -98,7 +98,8 @@ setInterval(async () => {
 							const {data} = await axios<any>(`https://staging.heroes.build/api/bounty/transactions?bountyId=${id}`);
 							const title = JSON.parse(JSON.parse(data[0].args).msg).metadata.title
 							
-							await bot.telegram.sendMessage(process.env.CHANNEL_ID as string,`🎉<b>Congratulations Hunter ${transaction.signer_id} 🎉</b>\n\n`+
+							await bot.telegram.sendMessage(process.env.CHANNEL_ID as string,`🎉<b>Congratulations ! </b>\n `+
+							`<b>Hunter ${transaction.signer_id}</b> \n\n`+
 							`- <b>Claimed :</b> $${amount}\n`+
 							`- <b>Paid in :</b>${stable_USD}\n`+
 							`- <b>Bounty :</b>${title}\n\n`+
