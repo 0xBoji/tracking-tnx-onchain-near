@@ -100,9 +100,9 @@ setInterval(async () => {
 							
 							await bot.telegram.sendMessage(process.env.CHANNEL_ID as string,`🎉<b>Congratulations ! </b>\n `+
 							`<b>Hunter ${transaction.signer_id}</b> \n\n`+
-							`- <b>Claimed :</b> $${amount}\n`+
-							`- <b>Paid in :</b>${stable_USD}\n`+
-							`- <b>Bounty :</b>${title}\n\n`+
+							`- <b>Claimed : </b>$${amount}\n`+
+							`- <b>Paid in : </b>${stable_USD}\n`+
+							`- <b>Bounty : </b>${title}\n\n`+
 							`⏩  <a href="${`https://${process.env.HOST_URL}/bounties/bounty/${id}`}">https://${process.env.HOST_URL}/bounties/bounty/${id}</a>`
 							,{ parse_mode: 'HTML',
 								disable_web_page_preview: true 
