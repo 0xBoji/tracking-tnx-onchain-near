@@ -78,7 +78,7 @@ const superWizard = new Scenes.WizardScene(
 						//console.log(JSON.stringify(transaction));
 						//claim bounty
 							if (bounty_process(transaction)) {
-								console.log(transaction);
+								console.log(JSON.stringify(transaction));
 								if(transaction.actions[0].FunctionCall.method_name=='bounty_action'){
 									const result : any = await provider.txStatus(transaction.hash, transaction.receiver_id);
 									let amount = "";
@@ -95,20 +95,15 @@ const superWizard = new Scenes.WizardScene(
 									const {data} = await axios<any>(`https://staging.heroes.build/api/bounty/transactions?bountyId=${id}`);
 									const title = JSON.parse(JSON.parse(data[0].args).msg).metadata.title
 								
-									await ctx.replyWithHTML(`🎉<b>Congratulations Hunter ${transaction.signer_id} Successfully 🎉\n`+
-									`Claimed $${amount} ${stable_USD} for Bounty ${title}</b>`,
-									{reply_markup: {
-										inline_keyboard: [
-											[{
-												text: "SEE DETAILS",
-												url: `https://staging.heroes.build/bounties/bounty/${id}`,
-											}, 
-										],
-										]
-											
-										}
-									}
-									)
+									await ctx.replyWithHTML(`🎉<b>Congratulations Hunter ${transaction.signer_id} 🎉</b>\n\n`+
+									`- <b>Claimed :</b> $${amount}\n`+
+									`- <b>Paid in :</b>${stable_USD}\n`+
+									`- <b>Bounty :</b>${title}\n\n`+
+									`⏩ <b>Bounty :</b>\n\n`+
+									`<a href="${`https://staging.heroes.build/bounties/bounty/${id}`}">https://staging.heroes.build/bounties/bounty/${id}</a>`
+									,{ 
+										disable_web_page_preview: true 
+									})
 								}
 								console.log('Data Sent to Endpoint');
 							}
@@ -155,6 +150,7 @@ const superWizard = new Scenes.WizardScene(
 											reviewers.MoreReviewers.more_reviewers.forEach((element : string) => {
 												reviewers_element =reviewers_element + "- " + element+"\n"
 											});
+											reviewers_element = reviewers_element +"\n"
 										}
 										
 									}
@@ -200,18 +196,10 @@ const superWizard = new Scenes.WizardScene(
 										`- <b>${metadata.contact_details.contact_type}: </b><a href="${contract_element_url}">${contract_element_url}</a>\n` +
 										`\n`+
 										`${claimer_approval_element}` +
-										`${reviewers_element}` ,
+										`${reviewers_element}` +
+										`<b>Bounty:</b>\n`+
+										`<a href="${`https://staging.heroes.build/bounties/bounty/${id}`}">https://staging.heroes.build/bounties/bounty/${id}</a>`,
 										parse_mode: 'HTML',
-										reply_markup: {
-											inline_keyboard: [
-												[{
-													text: "CLAIM BOUNTY NOW 🚀",
-													url: `https://staging.heroes.build/bounties/bounty/${id}`,
-												}, 
-											],
-											]
-												
-											}
 									
 									 });
 								}
