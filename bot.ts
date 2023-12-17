@@ -67,7 +67,6 @@ setInterval(async () => {
 		}
 
 		latestBlockHeight = height;
-		console.log('Latest Block:', height);
 
 		const chunks = latestBlock.chunks;
 
@@ -81,7 +80,6 @@ setInterval(async () => {
 				//console.log(JSON.stringify(transaction));
 				//claim bounty
 					if (bounty_process(transaction)) {
-						console.log(JSON.stringify(transaction));
 						if(transaction.actions[0].FunctionCall.method_name=='bounty_action'){
 							const result : any = await provider.txStatus(transaction.hash, transaction.receiver_id);
 							let amount = "";
@@ -108,7 +106,6 @@ setInterval(async () => {
 								disable_web_page_preview: true 
 							})
 						}
-						console.log('Data Sent to Endpoint');
 					}
 					if (create_new_bounty(transaction)) {
 						const result : any = await provider.txStatus(transaction.hash, transaction.receiver_id);
@@ -160,18 +157,15 @@ setInterval(async () => {
 							const claimer_approval = advanced_metadata.claimer_approval;
 							let claimer_approval_element = ''
 							if(claimer_approval){
-								console.log(JSON.stringify(claimer_approval));
 								if(claimer_approval?.WhitelistWithApprovals?.claimers_whitelist){
 									claimer_approval_element = '<b>⏩ Whitelist:</b>\n\n'
 									claimer_approval.WhitelistWithApprovals.claimers_whitelist.forEach((element : string) => {
-										console.log(element);
 										claimer_approval_element = claimer_approval_element + element +'\n'
 									});
 								}
 								if(claimer_approval?.ApprovalByWhitelist?.claimers_whitelist){
 									claimer_approval_element = '<b>⏩ Whitelist:</b>\n\n'
 									claimer_approval.ApprovalByWhitelist.claimers_whitelist.forEach((element : string) => {
-										console.log(element);
 										claimer_approval_element = claimer_approval_element + element +'\n'
 									});
 								}
@@ -185,7 +179,7 @@ setInterval(async () => {
 								`<b>NEW BOUNTY UPDATE:</b>\n` +
 								`${new Date().toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n\n`+
 								`<b> ${metadata.title}\n </b>` +
-								` - ${removeMd(metadata.description)}\n\n`+
+								` - ${removeMd(metadata.description).slice(0, 10)}\n\n`+
 								`<b>⏩ Requirements:</b>\n\n`+
 								`- <b>Level:</b> ${metadata.experience} \n`+
 								`- <b>${metadata.category} Skill: </b>${tags_element}\n`+
