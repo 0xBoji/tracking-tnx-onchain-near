@@ -140,7 +140,7 @@ setInterval(async () => {
 							let multitasking_element = ""
 							if(multitasking){
 								if(multitasking?.OneForAll){
-									multitasking_element = '- <b>Share: </b>$'+  parseInt(multitasking.OneForAll.amount_per_slot)/1e6  + ` ${stable_USD} per Hunter \n` 
+									multitasking_element = '- <b>Share: </b>$'+  parseInt(multitasking.OneForAll.amount_per_slot)/1e6  + ` ${stable_USD} per ${multitasking.OneForAll.number_of_slots} Hunter \n` 
 								}
 							}
 							let reviewers_element = "";
@@ -171,29 +171,29 @@ setInterval(async () => {
 								}
 							}
 
-							const kyc_config_element  = kyc_config ==  'KycNotRequired' ? '' :  kyc_config.KycRequired.kyc_verification_method == 'DuringClaimApproval' ? '- <b>KYC:</b> After\n' : kyc_config.KycRequired.kyc_verification_method == 'WhenCreatingClaim' ? '- <b>KYC:</b> Before \n' : '';
-							const deadline_element =  deadline == 'WithoutDeadline' ? '' : `-<b> Deadline: </b> ${new Date(parseInt(deadline?.DueDate.due_date)/1000000).toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n`
+							const kyc_config_element  = kyc_config ==  'KycNotRequired' ? '' :  '- <b>🆔KYC required</b>'//kyc_config.KycRequired.kyc_verification_method == 'DuringClaimApproval' ? '- <b>KYC:</b> After\n' : kyc_config.KycRequired.kyc_verification_method == 'WhenCreatingClaim' ? '- <b>KYC:</b> Before \n' : '';
+							const deadline_element =  deadline == 'WithoutDeadline' ? '' : `-<b>⏳ Deadline: </b> ${new Date(parseInt(deadline?.DueDate.due_date)/1000000).toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n`
 							const contract_element_url = metadata.contact_details.contact_type == "Telegram" ? `https://t.me/${metadata.contact_details.contact}` : metadata.contact_details.contact_type == 'Discord' ? `https://discord.com/users/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Twitter' ? `https://twitter.com/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Email' ? metadata.contact_details.contact_type : "Unknown";
 							await bot.telegram.sendPhoto(process.env.CHANNEL_ID as string,{source: './new_bounty.jpg'}, { 
 								caption: 
-								`<b>NEW BOUNTY UPDATE:</b>\n` +
+								`<b>🚀 NEW BOUNTY AVAILABLE! By ${transaction.signer_id}</b>\n` +
 								`${new Date().toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n\n`+
 								`<b> ${metadata.title}\n </b>` +
-								` - ${removeMd(metadata.description).slice(0, 10)}\n\n`+
-								`<b>⏩ Requirements:</b>\n\n`+
-								`- <b>Level:</b> ${metadata.experience} \n`+
-								`- <b>${metadata.category} Skill: </b>${tags_element}\n`+
-								`- <b>Acceptance criteria:</b> ${metadata.acceptance_criteria}\n` +
+								` - ${removeMd(metadata.description).slice(0, 200)}${removeMd(metadata.description).length > 203 ? '...' : ''}\n\n`+
+								`<b>🔍 Requirements:</b>\n\n`+
+								`- <b>🎓Level:</b> ${metadata.experience} \n`+
+								`- <b>🖌️${metadata.category} Skill: </b>${tags_element}\n`+
+								`- <b>✅Acceptance criteria:</b> ${metadata.acceptance_criteria}\n` +
 								`${kyc_config_element}\n` +
-								`<b>⏩ DETAILS:</b>\n\n`+
-								`- <b>Paid in: </b> ${stable_USD}\n`+
-								`- <b>Total: </b> $${amount} \n` +
+								`<b>📝 DETAILS:</b>\n\n`+
+								//`- <b>Paid in: </b> ${stable_USD}\n`+
+								`- <b>🌟Total: </b> $${amount} \n` +
 								`${multitasking_element}`+
 								`${deadline_element}`+
-								`- <b>${metadata.contact_details.contact_type}:</b> <a href="${contract_element_url}">${contract_element_url}</a>\n` +
+								`- <b>💬Contract:</b> <a href="${contract_element_url}">${contract_element_url}</a>\n` +
 								`\n`+
 								`${claimer_approval_element}` +
-								`${reviewers_element}` +
+								//`${reviewers_element}` +
 								`<b>Bounty:</b>\n`+
 								`<a href="${`https://${process.env.HOST_URL}/bounties/bounty/${id}`}">https://${process.env.HOST_URL}/bounties/bounty/${id}</a>`,
 								parse_mode: 'HTML',
