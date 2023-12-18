@@ -185,6 +185,7 @@ setInterval(async () => {
 								`<b>🖌️ ${metadata.category} Skill: </b>${tags_element}\n`+
 								`<b>✅ Acceptance criteria:</b> ${metadata.acceptance_criteria}\n` +
 								`${kyc_config_element}\n` +
+								`\n`+
 								`<b>📝 DETAILS:</b>\n\n`+
 								//`- <b>Paid in: </b> ${stable_USD}\n`+
 								`<b>🌟 Total: </b> $${amount} ${stable_USD}\n` +
