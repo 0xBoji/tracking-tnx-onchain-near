@@ -195,6 +195,7 @@ setInterval(async () => {
 								`\n`+
 								`${claimer_approval_element}` +
 								//`${reviewers_element}` +
+								`\n`+
 								`<b>🔗 FULL DETAILS</b>\n`+
 								`<a href="${`https://${process.env.HOST_URL}/bounties/bounty/${id}`}">https://${process.env.HOST_URL}/bounties/bounty/${id}</a>`,
 								parse_mode: 'HTML',
