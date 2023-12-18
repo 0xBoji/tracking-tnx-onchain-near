@@ -176,13 +176,13 @@ setInterval(async () => {
 							const contract_element_url = metadata.contact_details.contact_type == "Telegram" ? `https://t.me/${metadata.contact_details.contact}` : metadata.contact_details.contact_type == 'Discord' ? `https://discord.com/users/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Twitter' ? `https://twitter.com/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Email' ? metadata.contact_details.contact_type : "Unknown";
 							await bot.telegram.sendPhoto(process.env.CHANNEL_ID as string,{source: './new_bounty.jpg'}, { 
 								caption: 
-								`<b>🚀 NEW BOUNTY AVAILABLE! By ${transaction.signer_id}</b>\n` +
+								`<b>🚀 NEW ${metadata.category} BOUNTY AVAILABLE! By ${transaction.signer_id}</b>\n` +
 								`${new Date().toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n\n`+
 								`<b> ${metadata.title}\n </b>` +
 								` - ${removeMd(metadata.description).slice(0, 200)}${removeMd(metadata.description).length > 203 ? '...' : ''}\n\n`+
 								`<b>🔍 Requirements:</b>\n\n`+
 								`<b>🎓 Level:</b> ${metadata.experience} \n`+
-								`<b>🖌️ ${metadata.category} Skill: </b>${tags_element}\n`+
+								`<b>#️⃣ Skills needed: </b>${tags_element}\n`+
 								`<b>✅ Acceptance criteria:</b> ${metadata.acceptance_criteria}\n` +
 								`${kyc_config_element}\n` +
 								`\n`+
