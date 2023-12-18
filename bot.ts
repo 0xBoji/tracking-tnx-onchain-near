@@ -187,14 +187,14 @@ setInterval(async () => {
 								`${kyc_config_element}\n` +
 								`<b>📝 DETAILS:</b>\n\n`+
 								//`- <b>Paid in: </b> ${stable_USD}\n`+
-								`<b>🌟 Total: </b> $${amount} \n` +
+								`<b>🌟 Total: </b> $${amount} ${stable_USD}\n` +
 								`${multitasking_element}`+
 								`${deadline_element}`+
 								`<b>💬 Contract:</b> <a href="${contract_element_url}">${contract_element_url}</a>\n` +
 								`\n`+
 								`${claimer_approval_element}` +
 								//`${reviewers_element}` +
-								`<b>Bounty:</b>\n`+
+								`<b>🔗 FULL DETAILS</b>\n`+
 								`<a href="${`https://${process.env.HOST_URL}/bounties/bounty/${id}`}">https://${process.env.HOST_URL}/bounties/bounty/${id}</a>`,
 								parse_mode: 'HTML',
 							
