@@ -67,7 +67,7 @@ setInterval(async () => {
 		}
 
 		latestBlockHeight = height;
-
+		console.log(latestBlockHeight);
 		const chunks = latestBlock.chunks;
 
 		for (const chunk of chunks) {
