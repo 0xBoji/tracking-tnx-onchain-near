@@ -158,13 +158,13 @@ setInterval(async () => {
 							let claimer_approval_element = ''
 							if(claimer_approval){
 								if(claimer_approval?.WhitelistWithApprovals?.claimers_whitelist){
-									claimer_approval_element = '<b>Whitelist: <i>Yes</i></b>\n'
+									claimer_approval_element = '<b>Whitelist:</b> <i>Yes</i>\n'
 									// claimer_approval.WhitelistWithApprovals.claimers_whitelist.forEach((element : string) => {
 									// 	claimer_approval_element = claimer_approval_element + element +'\n'
 									// });
 								}
 								if(claimer_approval?.ApprovalByWhitelist?.claimers_whitelist){
-									claimer_approval_element = '<b>Whitelist: <i>Yes</i></b>\n'
+									claimer_approval_element = '<b>Whitelist:</b> <i>Yes</i>\n'
 									// claimer_approval.ApprovalByWhitelist.claimers_whitelist.forEach((element : string) => {
 									// 	claimer_approval_element = claimer_approval_element + element +'\n'
 									// });
@@ -173,28 +173,28 @@ setInterval(async () => {
 								claimer_approval_element = '<b>Whitelist: <i>No</i></b>\n'
 							}
 
-							const kyc_config_element  = kyc_config ==  'KycNotRequired' ? '<b>KYC required:<i>No</i></b>' :  '<b>KYC required:<i>Yes</i></b>'//kyc_config.KycRequired.kyc_verification_method == 'DuringClaimApproval' ? '- <b>KYC:</b> After\n' : kyc_config.KycRequired.kyc_verification_method == 'WhenCreatingClaim' ? '- <b>KYC:</b> Before \n' : '';
+							const kyc_config_element  = kyc_config ==  'KycNotRequired' ? '<b>KYC required:</b><i>No</i>' :  '<b>KYC required:</b><i>Yes</i>'//kyc_config.KycRequired.kyc_verification_method == 'DuringClaimApproval' ? '- <b>KYC:</b> After\n' : kyc_config.KycRequired.kyc_verification_method == 'WhenCreatingClaim' ? '- <b>KYC:</b> Before \n' : '';
 							const deadline_element =  deadline == 'WithoutDeadline' ? '' : `<b>Deadline: </b> <i>${new Date(parseInt(deadline?.DueDate.due_date)/1000000).toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}</i>\n`
 							const contract_element_url = metadata.contact_details.contact_type == "Telegram" ? `https://t.me/${metadata.contact_details.contact}` : metadata.contact_details.contact_type == 'Discord' ? `https://discord.com/users/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Twitter' ? `https://twitter.com/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Email' ? metadata.contact_details.contact_type : "Unknown";
 							await bot.telegram.sendPhoto(process.env.CHANNEL_ID as string,{source: './new_bounty.jpg'}, { 
 								caption: 
-								`<b>🚀 NEW ${metadata.category.toLocaleUpperCase()} BOUNTY AVAILABLE!\n`+
-								`By ${transaction.signer_id.toLocaleUpperCase()}</b>\n` +
+								`<b>🚀 NEW ${metadata.category.toLocaleUpperCase()} BOUNTY AVAILABLE!</b>\n`+
+								`By ${transaction.signer_id}\n` +
 								`${new Date().toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}\n\n`+
 								`<b>${metadata.title.toUpperCase()}\n </b>` +
 								`<i>${removeMd(metadata.description).slice(0, 200)}${removeMd(metadata.description).length > 203 ? '...' : ''}</i>\n\n`+
-								`<b>REQUIREMENTS:</b>\n`+
-								`<b>Skill Level:</b> <i>${metadata.experience}</i> \n`+
-								`<b>Skills needed:</b> <i>${tags_element}</i>\n`+
-								`<b>Acceptance criteria:</b> <i>${metadata.acceptance_criteria}</i>\n` +
-								`${kyc_config_element}\n` +
-								`\n`+
 								`<b>DETAILS</b>\n`+
 								//`- <b>Paid in: </b> ${stable_USD}\n`+
 								`<b>Total: </b> <i>$${amount} ${stable_USD}</i>\n` +
 								`${multitasking_element}`+
 								`${deadline_element}`+
 								`<b>Contract:</b> <a href="${contract_element_url}">${contract_element_url}</a>\n` +
+								`\n`+
+								`<b>REQUIREMENTS:</b>\n`+
+								`<b>Skill Level:</b> <i>${metadata.experience}</i> \n`+
+								`<b>Skills needed:</b> <i>${tags_element}</i>\n`+
+								`<b>Acceptance criteria:</b> <i>${metadata.acceptance_criteria}</i>\n` +
+								`${kyc_config_element}\n` +
 								`\n`+
 								`${claimer_approval_element}` +
 								//`${reviewers_element}` +
