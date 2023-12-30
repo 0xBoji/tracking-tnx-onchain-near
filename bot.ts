@@ -18,7 +18,7 @@
 // + Link to the bounty for more details.
 // - Message Clarity: Messages delivered by the bot should be coherent, easy to understand, and well-structured.
 // bounty_done : user - how much they claim - title
-// Smart contract address: bounties.heroes.build
+// Smart contact address: bounties.heroes.build
 
 import {session, Telegraf , Context } from "telegraf";
 import * as nearAPI from "near-api-js";
@@ -175,7 +175,7 @@ setInterval(async () => {
 
 							const kyc_config_element  = kyc_config ==  'KycNotRequired' ? '<b>KYC required:</b><i>No</i>' :  '<b>KYC required:</b><i>Yes</i>'//kyc_config.KycRequired.kyc_verification_method == 'DuringClaimApproval' ? '- <b>KYC:</b> After\n' : kyc_config.KycRequired.kyc_verification_method == 'WhenCreatingClaim' ? '- <b>KYC:</b> Before \n' : '';
 							const deadline_element =  deadline == 'WithoutDeadline' ? '' : `<b>Deadline: </b> <i>${new Date(parseInt(deadline?.DueDate.due_date)/1000000).toLocaleString('en-US',{year : 'numeric',month: 'long', day: 'numeric' })}</i>\n`
-							const contract_element_url = metadata.contact_details.contact_type == "Telegram" ? `https://t.me/${metadata.contact_details.contact}` : metadata.contact_details.contact_type == 'Discord' ? `https://discord.com/users/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Twitter' ? `https://twitter.com/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Email' ? metadata.contact_details.contact_type : "Unknown";
+							const contact_element_url = metadata.contact_details.contact_type == "Telegram" ? `https://t.me/${metadata.contact_details.contact}` : metadata.contact_details.contact_type == 'Discord' ? `https://discord.com/users/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Twitter' ? `https://twitter.com/${metadata.contact_details.contact}` :  metadata.contact_details.contact_type == 'Email' ? metadata.contact_details.contact_type : "Unknown";
 							await bot.telegram.sendPhoto(process.env.CHANNEL_ID as string,{source: './new_bounty.jpg'}, { 
 								caption: 
 								`<b>🚀 NEW ${metadata.category.toLocaleUpperCase()} BOUNTY AVAILABLE!</b>\n`+
@@ -188,7 +188,7 @@ setInterval(async () => {
 								`<b>Total: </b> <i>$${amount} ${stable_USD}</i>\n` +
 								`${multitasking_element}`+
 								`${deadline_element}`+
-								`<b>Contract:</b> <a href="${contract_element_url}">${contract_element_url}</a>\n` +
+								`<b>contact:</b> <a href="${contact_element_url}">${contact_element_url}</a>\n` +
 								`\n`+
 								`<b>REQUIREMENTS:</b>\n`+
 								`<b>Skill Level:</b> <i>${metadata.experience}</i> \n`+
