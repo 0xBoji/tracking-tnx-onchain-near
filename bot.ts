@@ -190,7 +190,7 @@ setInterval(async () => {
 								`${deadline_element}`+
 								`<b>contact:</b> <a href="${contact_element_url}">${contact_element_url}</a>\n` +
 								`\n`+
-								`<b>REQUIREMENTS:</b>\n`+
+								`<b>REQUIREMENTS</b>\n`+
 								`<b>Skill Level:</b> <i>${metadata.experience}</i> \n`+
 								`<b>Skills needed:</b> <i>${tags_element}</i>\n`+
 								`<b>Acceptance criteria:</b> <i>${metadata.acceptance_criteria}</i>\n` +
