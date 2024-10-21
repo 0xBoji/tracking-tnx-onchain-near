@@ -1,11 +1,11 @@
 {
-  "name": "heroesbuild",
+  "name": "tracking-deposit-bot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node --esm bot.ts"
+    "start": "bun run bot.ts"
   },
   "author": "",
   "license": "ISC",
@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.10.4",
-    "tsx": "^4.7.0",
+    "bun-types": "latest",
     "typescript": "^5.4.0-dev.20231208"
   }
 }
